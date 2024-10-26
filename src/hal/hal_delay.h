@@ -9,6 +9,8 @@
 #ifndef __HAL_DELAY_H__
 #define __HAL_DELAY_H__
 
+#include <stdint.h>
+
 /* Function prototypes */
 void Delay_ms(uint16_t ms);
 

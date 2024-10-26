@@ -2,13 +2,16 @@
  * @file speaker.c
  * @brief Implementation of speaker control functions.
  *
- * @author Ameed Othman
- * @date 2024-10-18
+ * @author: Ameed Othman
+ * @date: 2024-10-18
  */
 
 #include "speaker.h"
 #include "../config/config.h"
-#include "../output/output.h"
+#include "../hal/hal_gpio.h"
+#include "../hal/hal_delay.h"
+#include "../hal/hal_pwm.h"
+#include "notes.h"
 
 /* Speaker pin */
 static uint8_t speakerPin;
@@ -17,35 +20,22 @@ static uint8_t speakerPin;
  * @brief Initializes the speaker.
  * @param pin The GPIO pin connected to the speaker.
  */
-
 void Speaker_Init(uint8_t pin) {
     speakerPin = pin;
     GPIO_SetPinOutput(speakerPin);
+    PWM_Init();
 }
 
 /**
- * @brief Plays a note and blinks LEDs.
+ * @brief Plays a note.
  * @param note The frequency of the note.
  * @param duration The duration of the note in milliseconds.
  */
-void Speaker_PlayNoteWithLED(uint16_t note, uint16_t duration) {
-    /* Play note */
+void Speaker_PlayNote(uint16_t note, uint16_t duration) {
+    if (note == 0) return;
     PWM_PlayTone(speakerPin, note);
-    /* Turn on all LEDs */
-    GPIO_WritePin(LED_PIN_1, HIGH);
-    GPIO_WritePin(LED_PIN_2, HIGH);
-    GPIO_WritePin(LED_PIN_3, HIGH);
-    GPIO_WritePin(LED_PIN_4, HIGH);
-    /* Wait for duration */
     Delay_ms(duration);
-    /* Stop note */
     PWM_StopTone(speakerPin);
-    /* Turn off all LEDs */
-    GPIO_WritePin(LED_PIN_1, LOW);
-    GPIO_WritePin(LED_PIN_2, LOW);
-    GPIO_WritePin(LED_PIN_3, LOW);
-    GPIO_WritePin(LED_PIN_4, LOW);
-    /* Short delay */
     Delay_ms(50);
 }
 
@@ -73,22 +63,15 @@ void Speaker_PlayNoteForButton(uint8_t button) {
             break;
     }
     
-    PWM_PlayTone(speakerPin, note);
-    Delay_ms(100);
-    PWM_StopTone(speakerPin);
+    Speaker_PlayNote(note, 100);
 }
 
 /**
  * @brief Plays the failure tone.
  */
 void Speaker_PlayFailureTone(void) {
-    PWM_PlayTone(speakerPin, NOTE_G3);
-    Delay_ms(300);
-    PWM_StopTone(speakerPin);
+    Speaker_PlayNote(NOTE_G3, 300);
     Delay_ms(200);
-    PWM_PlayTone(speakerPin, NOTE_C3);
-    Delay_ms(300);
-    PWM_StopTone(speakerPin);
+    Speaker_PlayNote(NOTE_C3, 300);
 }
-
 

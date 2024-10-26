@@ -10,6 +10,11 @@
 #include "game/game_logic.h"
 #include "sound/melody.h"
 #include "sound/speaker.h"
+#include "hal/hal_gpio.h"
+#include "hal/hal_delay.h"
+#include "input/input.h"
+#include "output/output.h"
+
 
 /* Function prototypes */
 void setup(void);
@@ -20,7 +25,7 @@ void loop(void);
  */
 int main(void) {
     setup();
-    
+
     while(1) {
         loop();
     }

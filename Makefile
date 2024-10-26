@@ -3,7 +3,7 @@ PROJECT_NAME = arduino_memory_game
 MCU = atmega328p
 F_CPU = 16000000UL
 PROGRAMMER = arduino
-PORT = /dev/ttyUSB0
+PORT = /dev/cu.usbserial-110
 BAUD = 115200
 
 # Toolchain settings
@@ -27,10 +27,11 @@ SRC = src/main.c \
       src/output/output.c \
       src/sound/melody.c \
       src/sound/speaker.c \
-	  src/hal/hal_gpio.c \
+      src/hal/hal_gpio.c \
       src/hal/hal_delay.c \
-      src/hal/hal_adc.c
-
+      src/hal/hal_adc.c \
+      src/hal/hal_pwm.c \
+	  src/hal/pin_mapping.c 
 
 # Object files
 OBJ = $(SRC:.c=.o)

@@ -12,63 +12,74 @@
 
 #include "hal_gpio.h"
 #include <avr/io.h>
+#include <stddef.h>
+#include "pin_mapping.h"
 
 /**
  * @brief Configures a GPIO pin as input with a pull-up resistor enabled.
  *
- * This function sets the specified pin as an input and avtivates the 
- * internal pull-up resistor. It assumes the pin belongs to PORTD.
- *
- * @param pin The pin number to configure (0-7 for PORTD).
+ * @param pin The pin number to configure (Arduino digital pins 0-19).
  */
 void GPIO_SetPinInputPullup(uint8_t pin) {
+    volatile uint8_t *ddr, *port, *pin_reg;
+    uint8_t bit_mask;
+    map_pin_to_port(pin, &ddr, &port, &pin_reg, &bit_mask);
     /* Set the pin as input and enable the pull-up resistor */
-    DDRD &= ~(1 << pin);
-    PORTD |= (1 << pin);
+    if (ddr != NULL)
+    {
+        *ddr &= ~bit_mask;
+        *port |= bit_mask;
+    }
 }
 
 /**
  * @brief Configures a GPIO pin as output.
  *
- * This function sets the specified pin as an output. It assumes the pin
- * belongs to PORTD.
- *
- * @param pin The pin number to configure (0-7 for PORTD).
+ * @param pin The pin number to configure (Arduino digital pins 0-19).
  */
 void GPIO_SetPinOutput(uint8_t pin) {
+    volatile uint8_t *ddr, *port, *pin_reg;
+    uint8_t bit_mask;
+    map_pin_to_port(pin, &ddr, &port, &pin_reg, &bit_mask);
     /* Set the pin as output */
-    DDRD |= (1 << pin);
+    if (ddr != NULL) {
+        *ddr |= bit_mask; 
+    }
 }
 
 /**
  * @brief Writes a HIGH or LOW state to a GPIO pin.
  *
- * This function writes the specified state (HIGH or LOW) to the pin. It
- * assumes the pin belongs to PORTD.
- *
- * @param pin The pin number to write to (0-7 for PORTD).
+ * @param pin The pin number to write to (Arduino digital pins 0-19).
  * @param state The state to set (HIGH or LOW).
  */
 void GPIO_WritePin(uint8_t pin, uint8_t state) {
-    if (state == HIGH) {
-        PORTD |= (1 << pin);
-    } else {
-        PORTD &= ~(1 << pin);
+    volatile uint8_t *ddr, *port, *pin_reg;
+    uint8_t bit_mask;
+    map_pin_to_port(pin, &ddr, &port, &pin_reg, &bit_mask);
+    if (port != NULL) {
+        if (state == HIGH) {
+            *port |= bit_mask; 
+        } else {
+            *port &= ~bit_mask;
+        }
     }
 }
 
 /**
  * @brief Reads the state of a GPIO pin.
  *
- * This function reads and returns the state of the specified pin. It
- * assumes the pin belongs to PORTD.
- *
- * @param pin The pin number to read (0-7 for PORTD).
+ * @param pin The pin number to read (Arduino digital pins 0-19).
  * @return uint8_t Returns HIGH if pin is set, otherwise LOW.
  */
 uint8_t GPIO_ReadPin(uint8_t pin) {
+    volatile uint8_t *ddr, *port, *pin_reg;
+    uint8_t bit_mask;
+    map_pin_to_port(pin, &ddr, &port, &pin_reg, &bit_mask);
     /* Read the state of the pin */
-    return (PIND & (1 << pin)) ? HIGH : LOW;
+    if (pin_reg != NULL) {
+        return ((*pin_reg & bit_mask) != 0) ? HIGH : LOW;
+    }
+    return LOW;
 }
-
 

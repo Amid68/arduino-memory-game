@@ -8,6 +8,10 @@
 
 #include "input.h"
 #include "../config/config.h"
+#include "../hal/hal_gpio.h"
+#include "../hal/hal_delay.h"
+#include "../hal/hal_adc.h"
+#include <stdlib.h> 
 
 /* Function prototypes */
 static uint8_t ReadButtonState(uint8_t buttonPin);
@@ -43,7 +47,7 @@ uint8_t Input_GetButtonPress(void) {
     }
 
     /* Debounce delay */
-    Delay_ms(200);
+    Delay_ms(50);
     return buttonPressed;
 }
 
@@ -61,6 +65,8 @@ static uint8_t ReadButtonState(uint8_t buttonPin) {
  * @brief Initializes the random number generator.
  */
 void Random_Init(void) {
+    /* Initialize ADC */
+    ADC_Init();
     /* Seed the random number generator */
     srand(ADC_Read(0)); 
 }

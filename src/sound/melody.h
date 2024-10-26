@@ -2,8 +2,8 @@
  * @file melody.h
  * @brief Melody playback functions.
  *
- * @author Ameed Othman
- * @date 2024-10-18
+ * Author: Ameed Othman
+ * Date: 2024-10-18
  */
 
 #ifndef __MELODY_H__
@@ -14,3 +14,4 @@ void Melody_PlayIntro(void);
 void Melody_PlayHappy(void);
 
 #endif
+
